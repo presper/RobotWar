@@ -44,7 +44,10 @@ typedef NS_ENUM(NSInteger, RobotState) {
     RobotStateFiring,
     RobotStateSearching,
     RobotStateSearchingLeft,
-    RobotStateSearchingRight
+    RobotStateSearchingRight,
+    RobotStateTracking,
+    RobotStatePursuing,
+    RobotStateEvading
 };
 
 typedef NS_ENUM(NSInteger, RobotAction) {
@@ -54,10 +57,16 @@ typedef NS_ENUM(NSInteger, RobotAction) {
 
 @implementation AIRobot {
     RobotAction _currentRobotAction;
+    
+    // data about bullet
+    CGPoint _lastShotPosition;
     CGFloat _lastShotTime;
     
+    // data about enemy
     CGPoint _lastKnownEnemyPosition;
     CGFloat _lastKnownEnemyPositionTimestamp;
+    
+    CGFloat _enemyDistanceFromNorthWall;
     
     RobotState _currentRobotState;
     
@@ -152,13 +161,14 @@ typedef NS_ENUM(NSInteger, RobotAction) {
     }
 }
 
-/*
+
  - (void)gotHit {
+     // change state to threatened?
  [self shoot];
  [self turnRobotLeft:45];
  [self moveAhead:100];
  }
- */
+
 
 /*
  - (CGSize)arenaDimensions;
