@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		302B98E7196B1CF600737122 /* DalekDoomBot.m in Sources */ = {isa = PBXBuildFile; fileRef = 302B98E6196B1CF600737122 /* DalekDoomBot.m */; };
 		30FE96D41965C47200BFE235 /* AIRobot.m in Sources */ = {isa = PBXBuildFile; fileRef = 30FE96D31965C47200BFE235 /* AIRobot.m */; };
-		6236628E19612C5500ECB220 /* AdvancedRobot.m in Sources */ = {isa = PBXBuildFile; fileRef = BC7636F7195BBCAA0070222B /* AdvancedRobot.m */; };
 		6244629A1937DDD300895F2D /* Robot.m in Sources */ = {isa = PBXBuildFile; fileRef = 624462991937DDD300895F2D /* Robot.m */; };
 		629FCFF4193E71C300896E8C /* GameOverScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 629FCFF3193E71C300896E8C /* GameOverScene.m */; };
 		62C4F430194141DE0047553C /* Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 62C4F42F194141DE0047553C /* Helpers.m */; };
@@ -67,7 +67,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		30FE96D21965C47200BFE235 /* AIRobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AIRobot.h; path = Source/AIRobot.h; sourceTree = "<group>"; };
+		302B98E5196B1CF600737122 /* DalekDoomBot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DalekDoomBot.h; sourceTree = "<group>"; };
+		302B98E6196B1CF600737122 /* DalekDoomBot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DalekDoomBot.m; sourceTree = "<group>"; };
 		30FE96D31965C47200BFE235 /* AIRobot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AIRobot.m; path = Source/AIRobot.m; sourceTree = "<group>"; };
 		624462981937DDD300895F2D /* Robot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Robot.h; path = Source/Robot.h; sourceTree = "<group>"; };
 		624462991937DDD300895F2D /* Robot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Robot.m; path = Source/Robot.m; sourceTree = "<group>"; };
@@ -148,21 +149,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		624A3882193E7AF90054705C /* Robots */ = {
-			isa = PBXGroup;
-			children = (
-				30FE96D21965C47200BFE235 /* AIRobot.h */,
-				30FE96D31965C47200BFE235 /* AIRobot.m */,
-				65CC9158196141CF00838899 /* TurretRobot.h */,
-				65CC9159196141CF00838899 /* TurretRobot.m */,
-				BC7636F6195BBCAA0070222B /* AdvancedRobot.h */,
-				BC7636F7195BBCAA0070222B /* AdvancedRobot.m */,
-				BC7636F8195BBCAA0070222B /* SimpleRobot.h */,
-				BC7636F9195BBCAA0070222B /* SimpleRobot.m */,
-			);
-			name = Robots;
-			sourceTree = "<group>";
-		};
 		62C4F42D1941413E0047553C /* Engine */ = {
 			isa = PBXGroup;
 			children = (
@@ -190,6 +176,8 @@
 		65CC917619648EEE00838899 /* Robots */ = {
 			isa = PBXGroup;
 			children = (
+				302B98E5196B1CF600737122 /* DalekDoomBot.h */,
+				302B98E6196B1CF600737122 /* DalekDoomBot.m */,
 				65CC917719648EEE00838899 /* AdvancedRobot.h */,
 				65CC917819648EEE00838899 /* AdvancedRobot.m */,
 				65CC917919648EEE00838899 /* SimpleRobot.h */,
@@ -409,9 +397,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				302B98E7196B1CF600737122 /* DalekDoomBot.m in Sources */,
 				629FCFF4193E71C300896E8C /* GameOverScene.m in Sources */,
 				6244629A1937DDD300895F2D /* Robot.m in Sources */,
-				BC7636FB195BBCAA0070222B /* SimpleRobot.m in Sources */,
 				30FE96D41965C47200BFE235 /* AIRobot.m in Sources */,
 				65CC917E19648EEE00838899 /* SimpleRobot.m in Sources */,
 				B737893F1807617C0076A88C /* AppDelegate.m in Sources */,
