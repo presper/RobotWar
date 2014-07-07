@@ -8,6 +8,17 @@
 
 #import "Robot.h"
 
+typedef NS_ENUM(NSInteger, RobotAction) {
+    RobotActionDefault,
+    RobotActionSearching,
+    RobotActionPursuing,
+    RobotActionFiring,
+    RobotActionTracking,
+    RobotActionTurnaround
+};
+
 @interface DalekDoomBot : Robot
+
+@property (nonatomic, assign) RobotAction currentRobotAction;
 
 @end
