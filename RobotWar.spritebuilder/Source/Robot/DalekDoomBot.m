@@ -218,7 +218,8 @@ int enemyHealth = 20;
     }
     
     angle = [self angleBetweenGunHeadingDirectionAndWorldPosition:CGPointMake([self arenaDimensions].width/2, [self arenaDimensions].height/2)];
-    if (angle >= 0) {
+    NSLog(@"GUN ANGLE after HITWALL %f",angle);
+    if (angle <= 0) {
         [self turnGunLeft:fabsf(angle)];
     } else {
         [self turnGunRight:fabsf(angle)];
