@@ -27,12 +27,13 @@ static int _GUN_ANGLE_OFFSET = 0;     // @NOTE used in order to cushion rotation
 static int _COLLISION_OFFSET = 2.0f;     // @NOTE used in order to cushion distances, primarily for moving
 static CGFloat _STUN_TIME = 1.0f;
 static CGFloat _MIN_FIRING_DISTANCE = 0.1f;
-static CGFloat _MAX_FIRING_DISTANCE = 145.0f;
+static CGFloat _MAX_FIRING_DISTANCE = 148.5f;
 static CGFloat _WILD_SCAN_DISTANCE = 40.0f;
 static CGFloat _MAX_WILD_SCAN_TIME = 4.0f;
 static CGFloat _FIRE_AGAIN_TOLERANCE = 35.5f;   // tan of roughly 100 distance to enemy and width of tank
 static CGFloat _SAFE_TIME = 4.0f;
 static CGFloat _STRAFE_DISTANCE = 15.0f;
+static CGFloat _BASIC_GUN_ANGLE = 25.0f;
 static CGFloat _TIME_WITHOUT_SCAN_AFTER_FIRING = 1.0f;
 
 int enemyHealth = 20;
@@ -152,21 +153,30 @@ int enemyHealth = 20;
 #pragma mark Responses
 
 - (void)gotHit {
-    [self cancelActiveAction];
     
     timeLastShotByEnemy = [self currentTimestamp];
     positionLastShotByEnemy = [self position];
     
+    NSLog(@"GOT HIT AT (%f,%f)",[self position].x,[self position].y);
+    
     if (self.currentRobotAction == RobotActionFiring) {
         self.priorRobotAction = RobotActionFiring;
+        [self cancelActiveAction];
         self.currentRobotAction = RobotActionStrafing;
         NSLog(@"STATE CHANGE to STRAFING");
+        
+    } else if (self.currentRobotAction == RobotActionWildScanning) {
+        [self cancelActiveAction];
+        [self moveAhead:[self arenaDimensions].width];
+        NSLog(@"GET THE HELL OUT OF THERE.");
         
     } else if (self.currentRobotAction == RobotActionStrafing) {
         self.priorRobotAction = RobotActionStrafing;
         self.currentRobotAction = RobotActionStrafing;
+        
     } else {
         self.priorRobotAction = self.currentRobotAction;
+        [self cancelActiveAction];
         [self moveToCenterOfArena];
         // rotate a random angle (both gun and tank)
         CGFloat randomAngle = arc4random_uniform(361);
@@ -228,6 +238,7 @@ int enemyHealth = 20;
     switch (self.priorRobotAction) {
         case RobotActionFiring: {
             self.priorRobotAction = self.currentRobotAction;
+            [self cancelActiveAction];
             self.currentRobotAction = RobotActionFiring;
             NSLog(@"STATE CHANGE to FIRING");
         }
@@ -235,6 +246,7 @@ int enemyHealth = 20;
             
         default: {
             self.priorRobotAction = self.currentRobotAction;
+            [self cancelActiveAction];
             self.currentRobotAction = RobotActionSearching;
             NSLog(@"STATE CHANGE to SEARCHING");
         }
@@ -275,7 +287,7 @@ int enemyHealth = 20;
     [self moveAhead:distanceToPoint];
 }
 
-// @TODO
+
 - (void)moveToCenterOfArena {
     CGPoint centerOfArena = CGPointMake([self arenaDimensions].width/2, [self arenaDimensions].height/2);
     [self moveToPoint:centerOfArena];
@@ -295,10 +307,9 @@ int enemyHealth = 20;
         wildscanTime += 8;
         NSLog(@"ACTION TIME: %i",wildscanTime);
     }
-    // @TODO - discuss how long to do the wild search
 }
 
-// @TODO
+//TODO: testing to do here...
 - (void)adjustToFireAgainAtPosition:(CGPoint)position atDistance:(CGFloat)distance {
     NSLog(@"ADJUSTING TO FIRE.");
     /*
@@ -327,6 +338,13 @@ int enemyHealth = 20;
      */
     
     // @ASSUME position is lastKnownEnemyPosition
+    if (distance < _MIN_FIRING_DISTANCE) {
+        //TODO: move back a certain distance along vector between enemy and our tank
+    } else if (distance < _MAX_FIRING_DISTANCE) {
+        //TODO: test whether this works; theoretically, we should be halving the distance to the enemy as we adust to fire again
+        [self moveToPoint:ccp(position.x/2,position.y/2)];
+    }
+    
     CGFloat angle = [self angleBetweenGunHeadingDirectionAndWorldPosition:position];
     NSLog(@"ADJUST ANGLE from GUN TO ENEMY: %f",angle);
     NSLog(@"ADJUST to ENEMY POSITION: (%f,%f)",position.x,position.y);
@@ -340,9 +358,6 @@ int enemyHealth = 20;
         [self shoot];
     } else {
         // wait to scan again
-    }
-    if (distance < _MAX_FIRING_DISTANCE && distance > _MIN_FIRING_DISTANCE) {
-        [self moveAhead:10];
     }
     
 }
@@ -455,6 +470,7 @@ int enemyHealth = 20;
     CGFloat timeElapsedSinceHitByEnemy = [self currentTimestamp] - timeLastShotByEnemy;
     if (timeElapsedSinceHitByEnemy > _SAFE_TIME) {
         self.priorRobotAction = self.currentRobotAction;
+        [self cancelActiveAction];
         self.currentRobotAction = RobotActionFiring;
         NSLog(@"STATE CHANGE to FIRING");
         
@@ -463,19 +479,25 @@ int enemyHealth = 20;
         if (fabsf(headingFromEnemyPosition) > 75) {
             CGFloat angle = fabsf(headingFromEnemyPosition)-75;
             //CGFloat gunAngle = radToDeg(atan2f(tanf(fabsf(angle)), 1));
-            CGFloat gunAngle = 25.0f;
+            CGFloat gunAngle = _BASIC_GUN_ANGLE;
             if (headingFromEnemyPosition >= 0) {
                 [self turnRobotLeft:fabsf(angle)];
+                NSLog(@"TURNING LEFT %f DEGREES",angle);
                 [self moveAhead:_STRAFE_DISTANCE];
+                NSLog(@"ADVANCING %f METERS",_STRAFE_DISTANCE);
                 [self turnGunRight:gunAngle];
+                NSLog(@"ROTATING RIGHT %f DEGREES",gunAngle);
                 //[self moveAhead:_STRAFE_DISTANCE];
                 //[self turnGunRight:gunAngle];
                 //[self moveAhead:_STRAFE_DISTANCE];
                 //[self turnGunRight:gunAngle];
             } else {
                 [self turnRobotRight:fabsf(angle)];
+                NSLog(@"TURNING RIGHT %f DEGREES",angle);
                 [self moveAhead:_STRAFE_DISTANCE];
+                NSLog(@"ADVANCING %f METERS",_STRAFE_DISTANCE);
                 [self turnGunLeft:gunAngle];
+                NSLog(@"ROTATING LEFT %f DEGREES",gunAngle);
                 //[self moveAhead:_STRAFE_DISTANCE];
                 //[self turnGunLeft:gunAngle];
                 //[self moveAhead:_STRAFE_DISTANCE];
@@ -484,19 +506,25 @@ int enemyHealth = 20;
         } else {
             CGFloat angle = 75-fabsf(headingFromEnemyPosition);
             //CGFloat gunAngle = radToDeg(atan2f(tanf(fabsf(angle)), 1));
-            CGFloat gunAngle = 25.0f;
+            CGFloat gunAngle = _BASIC_GUN_ANGLE;
             if (headingFromEnemyPosition >= 0) {
                 [self turnRobotRight:fabsf(angle)];
+                NSLog(@"TURNING RIGHT %f DEGREES",angle);
                 [self moveAhead:_STRAFE_DISTANCE];
+                NSLog(@"ADVANCING %f METERS",_STRAFE_DISTANCE);
                 [self turnGunLeft:gunAngle];
+                NSLog(@"ROTATING LEFT %f DEGREES",gunAngle);
                 //[self moveAhead:_STRAFE_DISTANCE];
                 //[self turnGunLeft:gunAngle];
                 //[self moveAhead:_STRAFE_DISTANCE];
                 //[self turnGunLeft:gunAngle];
             } else {
                 [self turnRobotLeft:fabsf(angle)];
+                NSLog(@"TURNING LEFT %f DEGREES",angle);
                 [self moveAhead:_STRAFE_DISTANCE];
+                NSLog(@"ADVANCING %f METERS",_STRAFE_DISTANCE);
                 [self turnGunRight:gunAngle];
+                NSLog(@"ROTATING RIGHT %f DEGREES",gunAngle);
                 //[self moveAhead:_STRAFE_DISTANCE];
                 //[self turnGunRight:gunAngle];
                 //[self moveAhead:_STRAFE_DISTANCE];
